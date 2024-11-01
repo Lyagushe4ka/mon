@@ -1,0 +1,9 @@
+/node_modules
+
+package-lock.json
+
+/dependencies/keys.txt
+/dependencies/proxies.txt
+/dependencies/config.ts
+
+/data/*
