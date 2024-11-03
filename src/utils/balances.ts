@@ -50,6 +50,10 @@ export const getBalances = async (
       );
 
       nativeBalInWei = await provider.getBalance(address);
+
+      if (nativeBalInWei && tokenBalances) {
+        break;
+      }
     } catch (e) {
       continue;
     }
