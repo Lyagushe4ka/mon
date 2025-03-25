@@ -7,4 +7,4 @@ package-lock.json
 /dependencies/refs.txt
 /dependencies/config.ts
 
-/data/*
+/data/*.json
