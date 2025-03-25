@@ -17,16 +17,23 @@ export abstract class AbstractDatabase<T> {
     if (fs.existsSync(this.path)) {
       const fileData = fs.readFileSync(this.path, 'utf8');
 
-      if (fileData === '') {
+      if (fileData === '' || fileData === '{}') {
         return;
       }
 
-      this.data = new Map(JSON.parse(fileData));
+      this.data = new Map(Object.entries(JSON.parse(fileData)));
+      console.log('\nData loaded.\n');
+      // console.log(this.data);
     }
   }
 
   save(): void {
-    fs.writeFileSync(this.path, this.data ? JSON.stringify(this.data, null, 2) : '');
+    console.log('\nSaving data...\n');
+    // console.log(this.mapToObject(this.data));
+    fs.writeFileSync(
+      this.path,
+      this.data ? JSON.stringify(this.mapToObject(this.data), null, 2) : '',
+    );
   }
 
   abstract init(wallet: string): void;
@@ -52,7 +59,9 @@ export abstract class AbstractDatabase<T> {
       this.init(wallet);
     }
 
-    this.data.get(wallet)![statName] = value;
+    const data = this.data.get(wallet)!;
+    data[statName] = value;
+    this.data.set(wallet, data);
   }
 
   setAll(wallet: string, data: T): void {
@@ -61,5 +70,12 @@ export abstract class AbstractDatabase<T> {
 
   delete(wallet: string): void {
     this.data.delete(wallet);
+  }
+
+  private mapToObject<K extends string, V>(map: Map<K, V>): Record<K, V> {
+    return Array.from(map.entries()).reduce((obj, [key, value]) => {
+      obj[key] = value;
+      return obj;
+    }, {} as Record<K, V>);
   }
 }

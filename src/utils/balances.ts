@@ -1,10 +1,10 @@
 import { Contract, formatEther, formatUnits, JsonRpcProvider } from 'ethers';
-import { CONFIG } from '../../dependencies/config';
 import { ChainId } from '../../dependencies/types';
 import { CHAIN_DATA, TOKENS } from '../constants';
 import { MulticallWrapper } from 'ethers-multicall-provider';
 import { ERC20_ABI } from '../abi';
 import { getRate } from './rates';
+import { CONFIG } from '../../dependencies/config';
 
 interface Balances {
   tokens: {
@@ -118,4 +118,33 @@ export const getBalances = async (
       usd: undefined,
     },
   };
+};
+
+export const getNativeBalance = async (
+  address: string,
+  chainId: ChainId,
+): Promise<bigint | null> => {
+  const rpcs = CONFIG.CONSTANTS.RPCS[chainId];
+
+  const providers = rpcs.map((rpc) => new JsonRpcProvider(rpc));
+
+  let nativeBalInWei: bigint | null = null;
+  for (const provider of providers) {
+    try {
+      nativeBalInWei = await provider.getBalance(address);
+
+      if (nativeBalInWei) {
+        break;
+      }
+    } catch (e) {
+      continue;
+    }
+  }
+
+  if (!nativeBalInWei) {
+    console.log('Error while getting balances');
+    return null;
+  }
+
+  return nativeBalInWei;
 };

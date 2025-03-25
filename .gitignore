@@ -4,6 +4,7 @@ package-lock.json
 
 /dependencies/keys.txt
 /dependencies/proxies.txt
+/dependencies/refs.txt
 /dependencies/config.ts
 
 /data/*

@@ -1,9 +1,9 @@
 import { ContractTransaction, JsonRpcProvider, TransactionReceipt, Wallet } from 'ethers';
 import { retry } from './general';
 import { sleep } from './time';
-import { CONFIG } from '../../dependencies/config';
 import { ChainId } from '../../dependencies/types';
 import { CHAIN_DATA } from '../constants';
+import { CONFIG } from '../../dependencies/config';
 
 export async function executeTx(
   txData: ContractTransaction,
@@ -30,7 +30,7 @@ export async function executeTx(
 
     txData.nonce = nonce;
 
-    console.log(`\nSending tx from ${signers[0].address}...`);
+    console.log(`\nSending tx from ${signers[0].address} on chain ${chainId}...`);
 
     const tx = await retry(() =>
       Promise.race([

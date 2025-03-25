@@ -1,9 +1,11 @@
+import { CONFIG } from '../../dependencies/config';
 import { rndArrElement } from '../utils';
 import fs from 'fs';
 
 export class ParsedData {
   private keys: Set<string> = new Set();
   private proxies: Map<string, string> = new Map();
+  private refferals: Set<string> = new Set();
 
   constructor() {
     this.load();
@@ -24,7 +26,7 @@ export class ParsedData {
 
     this.keys = new Set(keys);
 
-    if (fs.existsSync('./dependencies/proxies.txt')) {
+    if (fs.existsSync('./dependencies/proxies.txt') && CONFIG.FLAGS.USE_PROXY) {
       let proxies = fs
         .readFileSync('./dependencies/proxies.txt', 'utf8')
         .replaceAll('\r', '')
@@ -53,6 +55,30 @@ export class ParsedData {
 
       this.proxies = new Map(keys.map((key, index) => [key, proxies[index]]));
     }
+
+    if (fs.existsSync('./dependencies/refs.txt') && CONFIG.FLAGS.USE_REFS) {
+      const refs = fs
+        .readFileSync('./dependencies/refs.txt', 'utf8')
+        .replaceAll('\r', '')
+        .split('\n');
+
+      refs.every((ref, index) => {
+        if (!ref.startsWith('0x') || ref.length !== 42) {
+          throw new Error(`Invalid ref at line ${index + 1}.`);
+        }
+        return true;
+      });
+
+      this.refferals = new Set(refs);
+    }
+  }
+
+  getRefferals() {
+    return this.refferals;
+  }
+
+  getRef() {
+    return rndArrElement(Array.from(this.refferals));
   }
 
   keysLeft() {

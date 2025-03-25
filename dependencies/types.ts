@@ -10,6 +10,8 @@ export interface Config {
       min: TimeSeparated;
       max: TimeSeparated;
     };
+
+    MIN_BALANCE: number;
   };
 
   CONSTANTS: {
@@ -18,6 +20,7 @@ export interface Config {
 
   FLAGS: {
     USE_PROXY: boolean;
+    USE_REFS: boolean;
   };
 }
 
@@ -25,4 +28,8 @@ export enum ChainId {
   ETHEREUM = 1,
   BSC = 56,
   POLYGON = 137,
+  BASE = 8453,
+  ARBITRUM = 42161,
+  OP = 10,
+  ZKSYNC = 324,
 }
